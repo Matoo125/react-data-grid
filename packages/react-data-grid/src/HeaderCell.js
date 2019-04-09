@@ -7,7 +7,6 @@ import { isElement } from 'react-is';
 import Column from './common/prop-shapes/Column';
 import { isFrozen } from './ColumnUtils';
 import { HeaderRowType } from './common/constants';
-import ResizeHandle from './ResizeHandle';
 
 function SimpleCellRenderer(objArgs) {
   const headerText = objArgs.column.rowType === 'header' ? objArgs.column.name : '';
@@ -31,12 +30,9 @@ export default class HeaderCell extends React.Component {
     renderer: SimpleCellRenderer
   };
 
-  state = { resizing: false };
-
   headerCellRef = (node) => this.headerCell = node;
 
   onDragStart = (e) => {
-    this.setState({ resizing: true });
     // need to set dummy data for FF
     if (e && e.dataTransfer && e.dataTransfer.setData) e.dataTransfer.setData('text/plain', 'dummy');
   };
@@ -54,7 +50,6 @@ export default class HeaderCell extends React.Component {
   onDragEnd = (e) => {
     const width = this.getWidthFromMouseEvent(e);
     this.props.onResizeEnd(this.props.column, width);
-    this.setState({ resizing: false });
   };
 
   getWidthFromMouseEvent = (e) => {
@@ -107,22 +102,22 @@ export default class HeaderCell extends React.Component {
 
   render() {
     const { column, rowType } = this.props;
-    const resizeHandle = column.resizable && (
-      <ResizeHandle
-        onDrag={this.onDrag}
-        onDragStart={this.onDragStart}
-        onDragEnd={this.onDragEnd}
-      />
-    );
-    const className = classNames({
-      'react-grid-HeaderCell': true,
-      'react-grid-HeaderCell--resizing': this.state.resizing,
+    const className = classNames('react-grid-HeaderCell', {
       'react-grid-HeaderCell--frozen': isFrozen(column)
     }, this.props.className, column.cellClass);
+
     const cell = (
       <div ref={this.headerCellRef} className={className} style={this.getStyle()}>
         {this.getCell()}
-        {resizeHandle}
+        {column.resizable && (
+          <div
+            className="react-grid-HeaderCell__resizeHandle"
+            draggable
+            onDrag={this.onDrag}
+            onDragStart={this.onDragStart}
+            onDragEnd={this.onDragEnd}
+          />
+        )}
       </div>
     );
 

@@ -3,7 +3,6 @@ import { shallow, mount } from 'enzyme';
 
 import HeaderCell from '../HeaderCell';
 import SortableHeaderCell from '../common/cells/headerCells/SortableHeaderCell';
-import ResizeHandle from '../ResizeHandle';
 
 describe('Header Cell Tests', () => {
   let testProps;
@@ -28,13 +27,6 @@ describe('Header Cell Tests', () => {
     const wrapper = shallow(<HeaderCell {...props} />);
     return { wrapper, props };
   }
-
-  it('should initialize the state correctly', () => {
-    const { wrapper } = setup();
-    expect(wrapper.state()).toEqual(
-      { resizing: false }
-    );
-  });
 
   describe('When custom render is supplied', () => {
     it('will render', () => {
@@ -61,21 +53,14 @@ describe('Header Cell Tests', () => {
 
     it('should render a resize handle', () => {
       const { wrapper } = setup();
-      const resizeHandle = wrapper.find(ResizeHandle);
+      const resizeHandle = wrapper.find('.react-grid-HeaderCell__resizeHandle');
       expect(resizeHandle.length).toBe(1);
-    });
-
-    it('start dragging handle should set resizing state to be true', () => {
-      const { wrapper } = setup();
-      const resizeHandle = wrapper.find(ResizeHandle);
-      resizeHandle.props().onDragStart();
-      expect(wrapper.state().resizing).toBe(true);
     });
 
     it('dragging handle should call onResize callback with width and column', () => {
       const dragLength = 200;
       const wrapper = mount(<HeaderCell {...testProps} />);
-      const resizeHandle = wrapper.find(ResizeHandle);
+      const resizeHandle = wrapper.find('.react-grid-HeaderCell__resizeHandle');
       const fakeEvent = { pageX: dragLength };
       resizeHandle.props().onDrag(fakeEvent);
       expect(testProps.onResize).toHaveBeenCalled();
@@ -83,18 +68,9 @@ describe('Header Cell Tests', () => {
       expect(testProps.onResize.mock.calls[0][1]).toEqual(dragLength);
     });
 
-    it('finish dragging should reset resizing state', () => {
-      const wrapper = mount(<HeaderCell {...testProps} />);
-      wrapper.setState({ resizing: true });
-      const fakeEvent = { pageX: 250 };
-      const resizeHandle = wrapper.find(ResizeHandle);
-      resizeHandle.props().onDragEnd(fakeEvent);
-      expect(wrapper.state().resizing).toBe(false);
-    });
-
     it('finish dragging should call onResizeEnd with correct params', () => {
       const wrapper = mount(<HeaderCell {...testProps} />);
-      const resizeHandle = wrapper.find(ResizeHandle);
+      const resizeHandle = wrapper.find('.react-grid-HeaderCell__resizeHandle');
       const fakeEvent = { pageX: 250 };
       resizeHandle.props().onDragEnd(fakeEvent);
       expect(testProps.onResizeEnd).toHaveBeenCalled();
