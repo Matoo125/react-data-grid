@@ -30,10 +30,21 @@
   top: 50%;
   transform: translateY(-50%);
 }
-.react-grid-HeaderCell__resizeHandle:hover {
+
+
+.react-grid-HeaderCell__resizeHandle {
   cursor: ew-resize;
-  background: #dddddd;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+
+  &:hover {
+    background: #dddddd;
+  }
 }
+
 .react-grid-HeaderCell--frozen:last-of-type {
     box-shadow: 2px 0 5px -2px rgba(136, 136, 136, .3);
 }
@@ -129,4 +140,3 @@
 .react-grid-HeaderCell .Select-menu-outer .Select-menu .Select-option.is-focused {
     color: #555555;
 }
-
